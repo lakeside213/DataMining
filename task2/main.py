@@ -55,7 +55,6 @@ for num in imagesCount:
     model = LogisticRegression(max_iter=5000)
     # input data in model and
 
-    # print(x_train)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
     accuracy = accuracy_score(y_test, y_pred)*100
