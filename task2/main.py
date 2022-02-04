@@ -4,56 +4,9 @@ from sklearn import svm
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-# write_file3 = open("3_training_imgs.csv", "w")
-# writer3 = csv.writer(write_file3)
 
-# write_file5 = open("5_training_imgs.csv", "w")
-# writer5 = csv.writer(write_file5)
-
-# write_file10 = open("10_training_imgs.csv", "w")
-# writer10 = csv.writer(write_file10)
-
-# write_file15 = open("15_training_imgs.csv", "w")
-# writer15 = csv.writer(write_file15)
-
-
-# images = pd.read_csv('Images.csv', names=[
-#                      "id", "class"], delimiter=';', skiprows=1)
-
-
-col_names_edge_histogram = ["id"]
-for i in range(80):
-    col_names_edge_histogram.append(str(i))
-
-# edge_histogram = pd.read_csv(
-#     'EdgeHistogram.csv', names=col_names_edge_histogram, delimiter=';', skiprows=1)
-
-# merged = images.merge(edge_histogram, on='id')
-# merged.to_csv("output.csv", index=False)
-
-# merged.sort_values(by=['class'], ascending=True).to_csv(
-#     "output.csv", index=False)
-
-# unique_classname = merged.drop_duplicates(subset=['class'])
-
-# unique_classname = unique_classname['class']
-
-
-# for class_name in unique_classname:
-#     imagesCSV = csv.reader(open('Images.csv'), delimiter=';')
-#     next(imagesCSV)
-#     i = 0
-#     for row in imagesCSV:
-#         if row[1] == class_name:
-#             if i < 3:
-#                 writer3.writerow(row)
-#             if i < 5:
-#                 writer5.writerow(row)
-#             if i < 10:
-#                 writer10.writerow(row)
-#             if i < 15:
-#                 writer15.writerow(row)
-#             i += 1
+cols_vectors = list(range(0, 80))
+cols_labels = ["id", *cols_vectors]
 
 imagesCount = [3, 5, 10, 15]
 
@@ -61,14 +14,17 @@ for num in imagesCount:
     # 3 images per class
     # prepare data for y_train
     training_csv_src = str(num) + '_training_imgs.csv'
+
     y_train = pd.read_csv(training_csv_src,
                           names=["id", "class"])
 
     y_train = y_train.sort_values(by=['id'], ascending=True)
 
+    print(y_train)
+
     # prepare data for x_train
     x_train = pd.read_csv(
-        'EdgeHistogram.csv', names=col_names_edge_histogram, skiprows=1, delimiter=';')
+        'EdgeHistogram.csv', names=cols_labels, skiprows=1, delimiter=';')
     mask = x_train['id'].isin(y_train['id'])
     x_train = x_train.loc[mask]
 
@@ -84,7 +40,7 @@ for num in imagesCount:
 
     # prepare x_test data
     x_test = pd.read_csv(
-        'EdgeHistogram.csv', names=col_names_edge_histogram, skiprows=1, delimiter=';')
+        'EdgeHistogram.csv', names=cols_labels, skiprows=1, delimiter=';')
     x_test = x_test.drop('id', axis=1)
     x_test_csv_src = "x_" + str(num) + "_test.csv"
     x_test.to_csv(x_test_csv_src, index=False)
@@ -96,7 +52,7 @@ for num in imagesCount:
     y_test_csv_src = "y_" + str(num) + "_test.csv"
     y_test.to_csv(y_test_csv_src, index=False)
 
-    model = svm.SVC(kernel='linear', max_iter=300)
+    model = LogisticRegression(max_iter=5000)
     # input data in model and
 
     # print(x_train)
